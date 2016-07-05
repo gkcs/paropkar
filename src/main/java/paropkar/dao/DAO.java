@@ -14,7 +14,7 @@ public abstract class DAO<T> {
         this.dataAccessor = dataAccessor;
     }
 
-    public abstract T getObject(String... args);
+    public abstract T getObject(String id);
 
     public abstract List<T> getAll();
 }

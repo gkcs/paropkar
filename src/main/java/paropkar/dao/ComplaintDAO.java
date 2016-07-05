@@ -5,10 +5,12 @@ import com.google.inject.Singleton;
 import org.springframework.jdbc.core.RowMapper;
 import paropkar.model.Complaint;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
-public class ComplaintDAO extends DAO<Complaint>{
+public class ComplaintDAO extends DAO<Complaint> {
 
     private final RowMapper<Complaint> complaintRowMapper = (rs, rowNum) -> new Complaint(
             rs.getString("title"),
@@ -25,12 +27,14 @@ public class ComplaintDAO extends DAO<Complaint>{
     }
 
     @Override
-    public Complaint getObject(String... args) {
-        return null;
+    public Complaint getObject(String id) {
+        final Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        return dataAccessor.queryForObject("select * from complaint", params, complaintRowMapper);
     }
 
     @Override
     public List<Complaint> getAll() {
-        return null;
+        return dataAccessor.queryAll("select * from complaint", complaintRowMapper);
     }
 }
