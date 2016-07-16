@@ -31,13 +31,13 @@ CREATE TABLE IF NOT EXISTS `paropkar`.`follower` (
 -- Table `paropkar`.`complaint`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `paropkar`.`complaint` (
-  `id` INT NOT NULL,
-  `title` VARCHAR(64) NOT NULL,
+  `id` INT NOT NULL DEFAULT 0,
+  `title` VARCHAR(64) NOT NULL DEFAULT '',
   `content` VARCHAR(512) NOT NULL,
   `city` VARCHAR(32) NOT NULL,
   `department` VARCHAR(32) NOT NULL,
   `type` VARCHAR(32) NULL,
-  `created_at` DATETIME NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
   `user_id` BIGINT(16) NOT NULL,
   `status` VARCHAR(32) NOT NULL,
   PRIMARY KEY (`id`, `department`, `city`),
@@ -55,7 +55,7 @@ ENGINE = InnoDB;
 -- Table `paropkar`.`notification`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `paropkar`.`notification` (
-  `id` INT(20) NOT NULL,
+  `id` INT(20) NOT NULL AUTO_INCREMENT,
   `content` TEXT(512) NOT NULL,
   `user_id` BIGINT(16) NOT NULL,
   PRIMARY KEY (`id`),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `paropkar`.`notification` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `emi`.`transaction`
+-- Table `paropkar`.`transaction`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `paropkar`.`transaction` (
   `txn_id` VARCHAR(64) NOT NULL,
@@ -83,3 +83,31 @@ CREATE TABLE IF NOT EXISTS `paropkar`.`transaction` (
   INDEX `aadhaar_idx` (`aadhaar_number` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Trigger `complaint`.`insertion`
+-- -----------------------------------------------------
+
+CREATE TRIGGER `trigger_complaint_insert` AFTER INSERT ON `complaint` FOR EACH ROW
+begin
+  DECLARE message VARCHAR(64);
+  DECLARE username_holder CURSOR FOR
+  select CONCAT(username,' has filed a new complaint ',new.title) from user where id=new.user_id;
+  OPEN username_holder;
+  FETCH username_holder INTO message;
+  insert into notification (user_id, content) select follower_id, message
+  from follower where user_id=new.user_id;
+  CLOSE username_holder;
+end;
+
+-- -----------------------------------------------------
+-- Trigger `complaint`.`update`
+-- -----------------------------------------------------
+
+CREATE TRIGGER `trigger_complaint_update` AFTER UPDATE ON `complaint` FOR EACH ROW
+begin
+  if(new.status!=old.status) then
+  insert into notification (user_id, content) values (new.user_id, CONCAT('Your complaint: \'',new.title,
+  '\' has an updated status'));
+  end if;
+end;
