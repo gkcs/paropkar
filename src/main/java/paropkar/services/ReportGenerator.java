@@ -1,7 +1,6 @@
 package paropkar.services;
 
 import paropkar.dao.ComplaintDAO;
-import paropkar.dao.DataAccessor;
 import paropkar.model.Complaint;
 
 import java.util.HashMap;
@@ -18,7 +17,7 @@ public class ReportGenerator {
                            final String cssFilePath) {
         this.htmlTemplateFile = htmlTemplateFile;
         this.cssFilePath = cssFilePath;
-        this.complaintDAO = new ComplaintDAO(DataAccessor.getDataAccessor());
+        this.complaintDAO = new ComplaintDAO();
         htmlToPdfConvertor = new HtmlToPdfConvertor();
     }
 

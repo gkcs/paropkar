@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import paropkar.dao.DataAccessor;
 import paropkar.dao.UserDAO;
 import paropkar.model.User;
 
@@ -21,7 +20,7 @@ public class UserController {
     private final Random random;
 
     public UserController() {
-        this.userDAO = new UserDAO(DataAccessor.getDataAccessor());
+        this.userDAO = new UserDAO();
         random = new Random();
     }
 
@@ -44,7 +43,7 @@ public class UserController {
     @RequestMapping("/getUser")
     public CompletableFuture<ResponseEntity<User>> getUser(@RequestBody final String id) {
         return userDAO.getObject(id)
-                .thenApply(complaint -> ResponseEntity.ok().body(complaint))
+                .thenApply(user -> ResponseEntity.ok().body(user))
                 .exceptionally(throwable -> {
                     throwable.printStackTrace();
                     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,7 +53,7 @@ public class UserController {
     @RequestMapping("/getAllUsers")
     public CompletableFuture<ResponseEntity<List<User>>> getAllUsers() {
         return userDAO.getAll()
-                .thenApply(complaints -> ResponseEntity.ok().body(complaints))
+                .thenApply(users -> ResponseEntity.ok().body(users))
                 .exceptionally(throwable -> {
                     throwable.printStackTrace();
                     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

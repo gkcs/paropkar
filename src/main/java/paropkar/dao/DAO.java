@@ -12,9 +12,9 @@ public abstract class DAO<T> {
     protected final DataAccessor dataAccessor;
     private final RowMapper<T> rowMapper;
 
-    public DAO(final String table_name, final DataAccessor dataAccessor, RowMapper<T> rowMapper) {
+    public DAO(final String table_name, RowMapper<T> rowMapper) {
         this.TABLE_NAME = table_name;
-        this.dataAccessor = dataAccessor;
+        this.dataAccessor = DataAccessor.getDataAccessor();
         this.rowMapper = rowMapper;
     }
 

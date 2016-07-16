@@ -111,3 +111,6 @@ begin
   '\' has an updated status'));
   end if;
 end;
+
+
+alter table notification add column created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
