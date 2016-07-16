@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +17,13 @@ public class DataAccessor {
     private static Logger log = LoggerFactory.getLogger(DataAccessor.class.getCanonicalName());
     private final ExecutorService executorService;
 
-    public DataAccessor() {
+    private static final DataAccessor dataAccessor = new DataAccessor();
+
+    public static DataAccessor getDataAccessor() {
+        return dataAccessor;
+    }
+
+    private DataAccessor() {
         this.jdbcTemplate = new JdbcTemplate(createDataSource("jdbc:mysql://localhost:3306/paropkar",
                 "com.mysql.jdbc.Driver", 10, 40));
         this.executorService = Executors.newFixedThreadPool(10);
@@ -72,6 +79,7 @@ public class DataAccessor {
     }
 
     public CompletableFuture<Integer> insert(String sql, Object... params) {
+        System.out.println(Arrays.toString(params));
         return CompletableFuture.supplyAsync(() -> jdbcTemplate.update(sql, params), executorService);
     }
 }

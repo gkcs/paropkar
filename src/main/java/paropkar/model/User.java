@@ -1,13 +1,17 @@
 package paropkar.model;
 
 public class User {
-    private final String username;
-    private final String email;
-    private final String password;
-    private final String aadhaarNumber;
-    private final String city;
-    private final String address;
-    private final String phoneNumber;
+    private String username;
+    private String email;
+    private String password;
+    private String aadhaarNumber;
+    private String city;
+    private String address;
+    private String phoneNumber;
+
+    public User() {
+    }
+
     private String twitterHandle;
 
     public User(final String username,
@@ -58,6 +62,34 @@ public class User {
 
     public String getTwitterHandle() {
         return twitterHandle;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAadhaarNumber(String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public void setTwitterHandle(String twitterHandle) {

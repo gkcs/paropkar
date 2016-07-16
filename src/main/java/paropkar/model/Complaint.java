@@ -1,13 +1,16 @@
 package paropkar.model;
 
 public class Complaint {
-    private final String title;
-    private final String content;
-    private final String city;
-    private final String department;
-    private final String type;
-    private final String user_id;
-    private final String status;
+    private String title;
+    private String content;
+    private String city;
+    private String department;
+    private String type;
+    private String user_id;
+    private String status;
+
+    public Complaint() {
+    }
 
     public Complaint(final String title,
                      final String content,
@@ -51,5 +54,33 @@ public class Complaint {
 
     public String getStatus() {
         return status;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

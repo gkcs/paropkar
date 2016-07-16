@@ -18,7 +18,7 @@ public class ReportGenerator {
                            final String cssFilePath) {
         this.htmlTemplateFile = htmlTemplateFile;
         this.cssFilePath = cssFilePath;
-        this.complaintDAO = new ComplaintDAO(new DataAccessor());
+        this.complaintDAO = new ComplaintDAO(DataAccessor.getDataAccessor());
         htmlToPdfConvertor = new HtmlToPdfConvertor();
     }
 
