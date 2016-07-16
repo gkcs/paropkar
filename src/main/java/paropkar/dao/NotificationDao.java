@@ -17,7 +17,6 @@ public class NotificationDao extends DAO<Notification> {
     }
 
     public CompletableFuture<List<Notification>> getUserNotifications(final String userId) {
-        dataAccessor.queryForList("select * from notification where user_id=?", rowMapper, userId);
-        return null;
+        return dataAccessor.queryForList("select * from notification where user_id=?", rowMapper, userId);
     }
 }
