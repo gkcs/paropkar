@@ -4,28 +4,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import paropkar.dao.ComplaintDAO;
-import paropkar.model.Complaint;
+import paropkar.dao.UserDAO;
+import paropkar.model.User;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@RestController
-public class ComplaintController {
-
-    private final ComplaintDAO complaintDAO;
+public class UserController {
+    private final UserDAO userDAO;
 
     @Autowired
-    public ComplaintController(final ComplaintDAO complaintDAO) {
-        this.complaintDAO = complaintDAO;
+    public UserController(final UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @RequestMapping("/register")
-    public CompletableFuture<ResponseEntity<String>> fileComplaint(final Complaint complaint) {
-        return complaintDAO.insert(getParams(complaint))
+    public CompletableFuture<ResponseEntity<String>> register(final User user) {
+        return userDAO.insert(getParams(user))
                 .thenApply(count -> {
                     if (count > 0) {
                         return ResponseEntity.ok().body("{}");
@@ -37,30 +34,31 @@ public class ComplaintController {
     }
 
     @RequestMapping("/getUser")
-    public CompletableFuture<ResponseEntity<Complaint>> getComplaint(final String id) {
-        return complaintDAO.getObject(id)
+    public CompletableFuture<ResponseEntity<User>> getUser(final String id) {
+        return userDAO.getObject(id)
                 .thenApply(complaint -> ResponseEntity.ok().body(complaint))
                 .exceptionally(throwable -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-    @RequestMapping("/getAllUser")
-    public CompletableFuture<ResponseEntity<List<Complaint>>> getAllComplaints() {
-        return complaintDAO.getAll()
+    @RequestMapping("/getAllUsers")
+    public CompletableFuture<ResponseEntity<List<User>>> getAllUsers() {
+        return userDAO.getAll()
                 .thenApply(complaints -> ResponseEntity.ok().body(complaints))
                 .exceptionally(throwable -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
-    private Object[] getParams(final Complaint complaint) {
+    private Object[] getParams(final User user) {
         return new Object[]{
-                UUID.randomUUID().toString(),
-                complaint.getTitle(),
-                complaint.getContent(),
-                complaint.getCity(),
-                complaint.getDepartment(),
-                complaint.getType(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getAadhaarNumber(),
+                user.getCity(),
+                user.getAddress(),
+                user.getPhoneNumber(),
                 new Timestamp(new java.util.Date().getTime()),
-                complaint.getUser_id(),
-                complaint.getStatus()
+                UUID.randomUUID().toString(),
+                user.getTwitterHandle()
         };
     }
 }

@@ -92,7 +92,7 @@ CREATE TRIGGER `trigger_complaint_insert` AFTER INSERT ON `complaint` FOR EACH R
 begin
   DECLARE message VARCHAR(64);
   DECLARE username_holder CURSOR FOR
-  select CONCAT(username,' has filed a new complaint ',new.title) from user where id=new.user_id;
+  select CONCAT(username, ' has filed a new complaint \'', new.title, '\'') from user where id=new.user_id;
   OPEN username_holder;
   FETCH username_holder INTO message;
   insert into notification (user_id, content) select follower_id, message
@@ -107,7 +107,7 @@ end;
 CREATE TRIGGER `trigger_complaint_update` AFTER UPDATE ON `complaint` FOR EACH ROW
 begin
   if(new.status!=old.status) then
-  insert into notification (user_id, content) values (new.user_id, CONCAT('Your complaint: \'',new.title,
+  insert into notification (user_id, content) values (new.user_id, CONCAT('Your complaint: \'', new.title,
   '\' has an updated status'));
   end if;
 end;
