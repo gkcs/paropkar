@@ -2,9 +2,9 @@
 Complaint Filing System
 
 
-Paropkar is a project to help customers file complaints to TRAI. 
+Paropkar is a project to help customers file complaints to their local Municipal Corporation.
 
-The complaints are maintained in a Big-Data database and external platforms like Twitter are integrated to allow users to share their complaints.
+The complaints are maintained in a MySQL database and external platforms like Twitter are integrated to allow users to share their complaints.
 
 Abbreviations:
 
@@ -14,11 +14,12 @@ UIDAI: Unique Identification Authority of India
 
 KYC: Know Your Customer
 
+MC: Municpal Corporation
 
 
 Registration:
 
-1) It user enters his/her aadhaar_number.
+1) The user enters his/her aadhaar_number.
 
 2) We send the number to UIDAI requesting for an OTP to the user's registered mobile number.
 
@@ -32,7 +33,7 @@ File Complaint:
 
 3) In case the user wants to submit with a UIDAI signature, an OTP request is made to UIDAI. On correct entering of OTP, UIDAI signs the complaint form document.
 
-4) The complaint is sent to TRAI for investigation. 
+4) The complaint is sent to MC for investigation. 
 
 5) The user can now view the complaint on his list of complaints. He/She can share, generate reports and monitor complaints.
 
@@ -56,4 +57,5 @@ The dao package contains classes to get and update database objects. The DataAcc
 
 The model package contains classes to map database entities to java objects.
 
-Database to be used: Cassandra
+Database used for transactions and request processing: MySQL
+Database to be used for analytics: Cassandra
