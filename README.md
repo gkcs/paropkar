@@ -17,6 +17,9 @@ KYC: Know Your Customer
 MC: Municpal Corporation
 
 
+
+
+
 Registration:
 
 1) The user enters his/her aadhaar_number.
