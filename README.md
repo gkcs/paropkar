@@ -39,7 +39,8 @@ File Complaint:
 5) The user can now view the complaint on his list of complaints. He/She can share, generate reports and monitor complaints.
 
 
-
+<br/>
+<br/>
 The project folder (paropkar) contains
 
 1) The Class diagram
@@ -50,7 +51,8 @@ The project folder (paropkar) contains
 
 4) The source folder containing code.
 
-
+<br/>
+<br/>
 
 Inside the src/main/java/paropkar/ contains dao and model packages.
 
