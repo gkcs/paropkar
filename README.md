@@ -58,4 +58,6 @@ The dao package contains classes to get and update database objects. The DataAcc
 The model package contains classes to map database entities to java objects.
 
 Database used for transactions and request processing: MySQL
+
+
 Database to be used for analytics: Cassandra
