@@ -1,5 +1,6 @@
 package paropkar.dao;
 
+import paropkar.model.Booking;
 import paropkar.model.Conference;
 
 public class ConferenceDao extends DAO<Conference> {
@@ -7,9 +8,9 @@ public class ConferenceDao extends DAO<Conference> {
         super("CONFERENCE", (rs, rowNum) -> new Conference(
                 rs.getString("id"),
                 rs.getString("participants"),
-                rs.getLong("start_time"),
-                rs.getLong("end_time"),
                 rs.getString("booker"),
-                rs.getString("room_id")));
+                new Booking(rs.getString("start_time"),
+                        rs.getString("end_time"),
+                        rs.getString("room_id"))));
     }
 }

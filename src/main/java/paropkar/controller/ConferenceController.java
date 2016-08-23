@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import paropkar.dao.ConferenceDao;
+import paropkar.model.Booking;
 import paropkar.model.Conference;
 
 import java.util.List;
@@ -31,12 +32,28 @@ public class ConferenceController {
                 });
     }
 
+    @RequestMapping("/getBookings")
+    public CompletableFuture<ResponseEntity<String>> getBookings(@RequestBody final Booking booking1) {
+        return conferenceDao.getAll()
+                .thenApply(conferences -> conferences
+                        .stream()
+                        .filter(booking -> booking.getBooking().getRoomId().equals(booking1.getRoomId()))
+                        .filter(booking -> clashes(booking.getBooking(), booking1))
+                        .map(Conference::toString)
+                        .collect(Collectors.joining(",")))
+                .thenApply(conferences -> ResponseEntity.ok().body("{\"conferences\":" + conferences + "}"));
+    }
+
+    private boolean clashes(Booking booking, Booking other) {
+        return !doesNotClash(booking, other);
+    }
+
     @RequestMapping("/bookConference")
     public CompletableFuture<ResponseEntity<String>> bookConference(@RequestBody final Conference conference) {
         final String id = UUID.randomUUID().toString();
         return conferenceDao.getAll().thenApply(conferences -> conferences.stream()
-                .filter(booking -> booking.getRoomId().equals(conference.getRoomId()))
-                .filter(booking -> doesNotClash(booking, conference))
+                .filter(booking -> booking.getBooking().getRoomId().equals(conference.getBooking().getRoomId()))
+                .filter(booking -> doesNotClash(booking.getBooking(), conference.getBooking()))
                 .collect(Collectors.toList()))
                 .thenAccept(conferences -> {
                     if (!conferences.isEmpty()) {
@@ -55,10 +72,11 @@ public class ConferenceController {
                         }));
     }
 
-    private boolean doesNotClash(final Conference booking, final Conference conference) {
-        final long start1 = booking.getStartTime(), start2 = conference.getStartTime(),
-                end1 = booking.getEndTime(), end2 = conference.getEndTime();
-        return !((start1 >= start2 && start1 <= end2) || (end1 >= start2 && end1 <= end2));
+    private boolean doesNotClash(final Booking booking, final Booking conference) {
+        final String start1 = booking.getStart(), start2 = conference.getStart(),
+                end1 = booking.getEnd(), end2 = conference.getEnd();
+        return !((start1.compareTo(end2) <= 0 && start1.compareTo(start2) >= 0)
+                || (end1.compareTo(start2) >= 0 && end1.compareTo(end2) <= 0));
     }
 
     @RequestMapping("/getAllConferences")
@@ -75,10 +93,10 @@ public class ConferenceController {
         return new Object[]{
                 id,
                 conference.getParticipants(),
-                conference.getStartTime(),
-                conference.getEndTime(),
+                conference.getBooking().getStart(),
+                conference.getBooking().getEnd(),
                 conference.getBooker(),
-                conference.getRoomId()
+                conference.getBooking().getRoomId()
         };
     }
 }
