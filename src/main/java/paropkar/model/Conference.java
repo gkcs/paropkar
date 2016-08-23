@@ -1,17 +1,20 @@
 package paropkar.model;
 
-import java.util.List;
+import com.sun.istack.internal.Nullable;
 
 public class Conference {
-    private final String id;
-    private final List<String> participants;
-    private final long startTime;
-    private final long endTime;
-    private final String booker;
-    private final String roomId;
+    private String id;
+    private String participants;
+    private long startTime;
+    private long endTime;
+    private String booker;
+    private String roomId;
+
+    public Conference() {
+    }
 
     public Conference(final String id,
-                      final List<String> participants,
+                      final String participants,
                       final long startTime,
                       final long endTime,
                       final String booker,
@@ -24,11 +27,13 @@ public class Conference {
         this.roomId = roomId;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
 
-    public List<String> getParticipants() {
+    @Nullable
+    public String getParticipants() {
         return participants;
     }
 
@@ -40,11 +45,36 @@ public class Conference {
         return endTime;
     }
 
+    @Nullable
     public String getBooker() {
         return booker;
     }
 
     public String getRoomId() {
         return roomId;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setParticipants(String participants) {
+        this.participants = participants;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setBooker(String booker) {
+        this.booker = booker;
+    }
+
+    public void setRoomId(String roomId) {
+        this.roomId = roomId;
     }
 }
