@@ -1,10 +1,9 @@
 package paropkar.controller;
 
+import com.google.gson.Gson;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import paropkar.dao.ConferenceDao;
 import paropkar.model.Booking;
 import paropkar.model.Conference;
@@ -16,12 +15,14 @@ import java.util.stream.Collectors;
 
 @RestController
 public class ConferenceController {
+    public static final Gson GSON = new Gson();
     private final ConferenceDao conferenceDao;
 
     public ConferenceController() {
         this.conferenceDao = new ConferenceDao();
     }
 
+    @CrossOrigin("*")
     @RequestMapping("/getConference")
     public CompletableFuture<ResponseEntity<Conference>> getConference(@RequestBody final String id) {
         return conferenceDao.getObject(id)
@@ -32,34 +33,41 @@ public class ConferenceController {
                 });
     }
 
+    @CrossOrigin("*")
     @RequestMapping("/getBookings")
-    public CompletableFuture<ResponseEntity<String>> getBookings(@RequestBody final Booking booking1) {
+    public CompletableFuture<ResponseEntity<String>> getBookings(@RequestParam final String roomId,
+                                                                 @RequestParam final String start,
+                                                                 @RequestParam final String end) {
         return conferenceDao.getAll()
                 .thenApply(conferences -> conferences
                         .stream()
-                        .filter(booking -> booking.getBooking().getRoomId().equals(booking1.getRoomId()))
-                        .filter(booking -> clashes(booking.getBooking(), booking1))
-                        .map(Conference::toString)
-                        .collect(Collectors.joining(",")))
-                .thenApply(conferences -> ResponseEntity.ok().body("{\"conferences\":" + conferences + "}"));
+                        .map(Conference::getBooking)
+                        .filter(booking -> booking.getRoomId().equals(roomId))
+                        .filter(booking -> clashes(booking, new Booking(start, end, roomId)))
+                        .map(Booking::convertToWrapper)
+                        .collect(Collectors.toList()))
+                .thenApply(GSON::toJson)
+                .thenApply(bookings -> ResponseEntity.ok().body(bookings));
     }
 
-    private boolean clashes(Booking booking, Booking other) {
-        return !doesNotClash(booking, other);
-    }
-
+    @CrossOrigin("*")
     @RequestMapping("/bookConference")
-    public CompletableFuture<ResponseEntity<String>> bookConference(@RequestBody final Conference conference) {
+    public CompletableFuture<ResponseEntity<String>> bookConference(@RequestParam final String jid,
+                                                                    @RequestParam final String title,
+                                                                    @RequestParam final String start,
+                                                                    @RequestParam final String end,
+                                                                    @RequestParam final String roomId) {
         final String id = UUID.randomUUID().toString();
+        final Booking book = new Booking(start, end, roomId);
         return conferenceDao.getAll().thenApply(conferences -> conferences.stream()
-                .filter(booking -> booking.getBooking().getRoomId().equals(conference.getBooking().getRoomId()))
-                .filter(booking -> doesNotClash(booking.getBooking(), conference.getBooking()))
+                .filter(booking -> booking.getBooking().getRoomId().equals(roomId))
+                .filter(booking -> doesNotClash(booking.getBooking(), book))
                 .collect(Collectors.toList()))
                 .thenAccept(conferences -> {
                     if (!conferences.isEmpty()) {
                         throw new RuntimeException("Conference clashes with another booking");
                     }
-                }).thenCompose(__ -> conferenceDao.insert(getParams(conference, id))
+                }).thenCompose(__ -> conferenceDao.insert(getParams(new Conference("", "", jid, title, book), id))
                         .thenApply(count -> {
                             if (count > 0) {
                                 return ResponseEntity.ok().body("{\"id\":\"" + id + "\"}");
@@ -72,6 +80,10 @@ public class ConferenceController {
                         }));
     }
 
+    private boolean clashes(final Booking booking, final Booking other) {
+        return !doesNotClash(booking, other);
+    }
+
     private boolean doesNotClash(final Booking booking, final Booking conference) {
         final String start1 = booking.getStart(), start2 = conference.getStart(),
                 end1 = booking.getEnd(), end2 = conference.getEnd();
@@ -79,6 +91,7 @@ public class ConferenceController {
                 || (end1.compareTo(start2) >= 0 && end1.compareTo(end2) <= 0));
     }
 
+    @CrossOrigin("*")
     @RequestMapping("/getAllConferences")
     public CompletableFuture<ResponseEntity<List<Conference>>> getAllConferences() {
         return conferenceDao.getAll()
@@ -96,7 +109,8 @@ public class ConferenceController {
                 conference.getBooking().getStart(),
                 conference.getBooking().getEnd(),
                 conference.getBooker(),
-                conference.getBooking().getRoomId()
+                conference.getBooking().getRoomId(),
+                conference.getTitle()
         };
     }
 }

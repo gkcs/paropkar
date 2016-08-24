@@ -46,4 +46,29 @@ public class Booking {
     public String getStart() {
         return start;
     }
+
+    public WrapperBooking convertToWrapper() {
+        return new WrapperBooking(roomId, start, end);
+    }
+
+    public static class WrapperBooking {
+        private final String title;
+        private final String start;
+        private final String end;
+
+        public WrapperBooking(String id, String start, String end) {
+            this.title = id;
+            this.start = start;
+            this.end = end;
+        }
+
+        @Override
+        public String toString() {
+            return "WrapperBooking{" +
+                    "title='" + title + '\'' +
+                    ", start='" + start + '\'' +
+                    ", end='" + end + '\'' +
+                    '}';
+        }
+    }
 }

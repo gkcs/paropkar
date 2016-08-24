@@ -6,6 +6,7 @@ public class Conference {
     private String id;
     private String participants;
     private String booker;
+    private String title;
 
     public Booking getBooking() {
         return booking;
@@ -23,10 +24,11 @@ public class Conference {
     public Conference(final String id,
                       final String participants,
                       final String booker,
-                      final Booking booking) {
+                      String title, final Booking booking) {
         this.id = id;
         this.participants = participants;
         this.booker = booker;
+        this.title = title;
         this.booking = booking;
     }
 
@@ -65,5 +67,13 @@ public class Conference {
                 ", booker='" + booker + '\'' +
                 ", booking=" + booking +
                 '}';
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
