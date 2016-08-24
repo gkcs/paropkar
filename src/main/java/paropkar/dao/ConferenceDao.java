@@ -9,8 +9,7 @@ public class ConferenceDao extends DAO<Conference> {
                 rs.getString("id"),
                 rs.getString("participants"),
                 rs.getString("booker"),
-                rs.getString("title"),
-                new Booking(rs.getString("start_time"),
+                new Booking(rs.getString("title"), rs.getString("start_time"),
                         rs.getString("end_time"),
                         rs.getString("room_id"))));
     }

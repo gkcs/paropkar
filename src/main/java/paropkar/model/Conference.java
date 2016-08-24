@@ -1,12 +1,9 @@
 package paropkar.model;
 
-import com.sun.istack.internal.Nullable;
-
 public class Conference {
     private String id;
     private String participants;
     private String booker;
-    private String title;
 
     public Booking getBooking() {
         return booking;
@@ -24,25 +21,21 @@ public class Conference {
     public Conference(final String id,
                       final String participants,
                       final String booker,
-                      String title, final Booking booking) {
+                      final Booking booking) {
         this.id = id;
         this.participants = participants;
         this.booker = booker;
-        this.title = title;
         this.booking = booking;
     }
 
-    @Nullable
     public String getId() {
         return id;
     }
 
-    @Nullable
     public String getParticipants() {
         return participants;
     }
 
-    @Nullable
     public String getBooker() {
         return booker;
     }
@@ -67,13 +60,5 @@ public class Conference {
                 ", booker='" + booker + '\'' +
                 ", booking=" + booking +
                 '}';
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 }

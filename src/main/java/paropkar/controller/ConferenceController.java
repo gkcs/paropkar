@@ -17,8 +17,11 @@ import java.util.stream.Collectors;
 public class ConferenceController {
     public static final Gson GSON = new Gson();
     private final ConferenceDao conferenceDao;
+    //private final SimpleDateFormat simpleDateFormat;
 
     public ConferenceController() {
+        //this.simpleDateFormat=new SimpleDateFormat("yyyy-MM-ddThh:mm:ss");
+        //2016-06-09T16:00:00-05:00
         this.conferenceDao = new ConferenceDao();
     }
 
@@ -43,7 +46,6 @@ public class ConferenceController {
                         .stream()
                         .map(Conference::getBooking)
                         .filter(booking -> booking.getRoomId().equals(roomId))
-                        .filter(booking -> clashes(booking, new Booking(start, end, roomId)))
                         .map(Booking::convertToWrapper)
                         .collect(Collectors.toList()))
                 .thenApply(GSON::toJson)
@@ -58,35 +60,25 @@ public class ConferenceController {
                                                                     @RequestParam final String end,
                                                                     @RequestParam final String roomId) {
         final String id = UUID.randomUUID().toString();
-        final Booking book = new Booking(start, end, roomId);
-        return conferenceDao.getAll().thenApply(conferences -> conferences.stream()
-                .filter(booking -> booking.getBooking().getRoomId().equals(roomId))
-                .filter(booking -> doesNotClash(booking.getBooking(), book))
-                .collect(Collectors.toList()))
-                .thenAccept(conferences -> {
-                    if (!conferences.isEmpty()) {
-                        throw new RuntimeException("Conference clashes with another booking");
+        final Booking book = new Booking(title, start, end, roomId);
+        return conferenceDao.insert(getParams(new Conference("", "", jid, book), id))
+                .thenApply(count -> {
+                    if (count > 0) {
+                        return ResponseEntity.ok().body("{\"id\":\"" + id + "\"}");
+                    } else {
+                        throw new RuntimeException("Failed to insert into database");
                     }
-                }).thenCompose(__ -> conferenceDao.insert(getParams(new Conference("", "", jid, title, book), id))
-                        .thenApply(count -> {
-                            if (count > 0) {
-                                return ResponseEntity.ok().body("{\"id\":\"" + id + "\"}");
-                            } else {
-                                throw new RuntimeException("Failed to insert into database");
-                            }
-                        }).exceptionally(throwable -> {
-                            throwable.printStackTrace();
-                            return new ResponseEntity<>(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-                        }));
+                }).exceptionally(throwable -> {
+                    throwable.printStackTrace();
+                    return new ResponseEntity<>(throwable.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                });
     }
 
     private boolean clashes(final Booking booking, final Booking other) {
-        return !doesNotClash(booking, other);
+        return !doesNotClash(booking.getStart(), other.getStart(), booking.getEnd(), other.getEnd());
     }
 
-    private boolean doesNotClash(final Booking booking, final Booking conference) {
-        final String start1 = booking.getStart(), start2 = conference.getStart(),
-                end1 = booking.getEnd(), end2 = conference.getEnd();
+    private boolean doesNotClash(final String start1, final String start2, final String end1, final String end2) {
         return !((start1.compareTo(end2) <= 0 && start1.compareTo(start2) >= 0)
                 || (end1.compareTo(start2) >= 0 && end1.compareTo(end2) <= 0));
     }
@@ -110,7 +102,7 @@ public class ConferenceController {
                 conference.getBooking().getEnd(),
                 conference.getBooker(),
                 conference.getBooking().getRoomId(),
-                conference.getTitle()
+                conference.getBooking().getTitle()
         };
     }
 }
