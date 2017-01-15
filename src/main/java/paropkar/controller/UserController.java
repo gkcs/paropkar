@@ -74,10 +74,4 @@ public class UserController {
                 user.getTwitterHandle()
         };
     }
-
-    public static void main(String[] args) {
-        System.out.println(new Gson().toJson(new User("Gaurav Sen", "gauravsen92@gmail.com", "gaurav", "63413",
-                "Mumbai",
-                "Bandra", "+919920533241", "gkcs")));
-    }
 }

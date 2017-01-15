@@ -74,13 +74,4 @@ public class ComplaintController {
                 complaint.getStatus()
         };
     }
-
-    public static void main(String[] args) {
-        System.out.println(new Gson().toJson(new Complaint("Land fill sanitation",
-                "There is too much candy at my place",
-                "Mumbai",
-                "Land",
-                "valid",
-                "212", "processing")));
-    }
 }

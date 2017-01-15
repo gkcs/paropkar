@@ -80,9 +80,4 @@ public class NotificationController {
                 notification.getContent()
         };
     }
-
-    public static void main(String[] args) {
-        System.out.println(new Gson().toJson(new Notification(UUID.randomUUID().toString(), "Gaurav Sen", "Some " +
-                "stuff", new Timestamp(new Date().getTime()))));
-    }
 }
